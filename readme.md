@@ -6,6 +6,8 @@ Why?
 
 Because I accidentally ordered Noctua PWM fans instead of FLX ones and all other Raspberry Pi PWM solutions I found were unacceptable with 20%+ idle CPU usage, out-of-date dependencies, etc. I wanted something light-weight that I can fully trust as a core system utility in `/usr/sbin`.
 
+---
+
 ### Wiring:
 
 **This configuration is for a 5V PWM fan!**
@@ -19,10 +21,12 @@ Pin numbers are basic Raspberry Pi "pin 1 starts at J8" numbers (not GPIO/etc. n
 
 For a better visual follow wiring diagram listed here: https://blog.driftking.tw/en/2019/11/Using-Raspberry-Pi-to-Control-a-PWM-Fan-and-Monitor-its-Speed/#Wiring
 
+---
+
 ### Building/Installing:
 
 **Requirements:**
-* `wiringPi.h` via obtainable with `sudo apt install wiringpi`
+* `wiringPi.h` obtainable with `sudo apt install wiringpi`
 
 ```bash
 # Compile
@@ -39,9 +43,14 @@ sudo make install
 sudo make uninstall
 ```
 
+---
+
 ### Notes:
 
 * Only tested with a Raspberry Pi 4 but should work fine with other models that have PWM capability
+* You will likely want to tweak the temps/speeds to your own needs in `main.c`. Currently I have it configured to aggressively keep the temps down as much as possible since mine literally sits centimeters away from a heated printer bed.
+
+---
 
 ### Helpful Resources:
 
