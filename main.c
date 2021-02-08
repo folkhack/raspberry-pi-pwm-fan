@@ -121,7 +121,7 @@ int main() {
 
         } else {
 
-            pwmWrite( PWM_PIN, FAN_OFF );
+            pwmWrite( PWM_PIN, 0 );
 
             #ifdef DEBUG
 
