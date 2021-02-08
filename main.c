@@ -10,9 +10,12 @@
 #define KYEL "\x1B[33m"
 
 const int PWM_PIN    = 1;    // Maps to pin 12 on RPI
+
+const int CPU_FULL   = 46;   // Temp at which fan has PWM value set to "FAN_FULL"
 const int FAN_FULL   = 1023; // PWM motor control is 0-1023
-const int FAN_LOW    = 750;  // Low speed is half of full
-const int FAN_OFF    = 0;    // Fan off is zero
+const int CPU_LOW    = 42;   // Temp at which fan has PWM value set to "FAN_LOW"
+const int FAN_LOW    = 750;  // Lower speed for casually pushing temps down
+
 const int INTERVAL_S = 2;    // Temp check + fan set interval in seconds
 
 int main() {
@@ -80,7 +83,7 @@ int main() {
 
         // Check current CPU temp to see what we want to set the fan to and write the
         //    correct motor speed value to the PWM pin
-        if( cpu_temp_c >= 46 ) {
+        if( cpu_temp_c >= CPU_FULL ) {
 
             pwmWrite( PWM_PIN, FAN_FULL );
 
@@ -98,7 +101,7 @@ int main() {
 
             #endif
 
-        } else if( cpu_temp_c >= 42 ) {
+        } else if( cpu_temp_c >= CPU_LOW ) {
 
             pwmWrite( PWM_PIN, FAN_LOW );
 
