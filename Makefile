@@ -1,6 +1,6 @@
 ENTRY  = main.c
 OPTS   = -g -O0 -Wall
-LIBS   = -L /usr/local/include -lwiringPi
+LIBS   = -L /usr/local/include -lwiringPi -lcrypt -lpthread -lm -lrt
 TARGET = pwm_fan_control
 
 # COMPILE:

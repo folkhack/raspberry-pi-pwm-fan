@@ -11,12 +11,17 @@
 
 const int PWM_PIN    = 1;    // Maps to pin 12 on RPI
 
-const int CPU_FULL   = 46;   // Temp at which fan has PWM value set to "FAN_FULL"
-const int FAN_FULL   = 1023; // PWM motor control is 0-1023
-const int CPU_LOW    = 42;   // Temp at which fan has PWM value set to "FAN_LOW"
-const int FAN_LOW    = 750;  // Lower speed for casually pushing temps down
+const int CPU_FULL   = 50;   // Temp over which fan has PWM value set to "FAN_FULL"
+                             // below is set to "FAN_MID
+const int CPU_LOW    = 45;   // Temp below which fan has PWM value set to "FAN_LOW"
+                             // over is set to "FAN_MID#"
 
-const int INTERVAL_S = 2;    // Temp check + fan set interval in seconds
+const int FAN_FULL   = 1023; // PWM motor control is 0-1023 speed for hot CPU
+const int FAN_LOW    = 300;  // Lowest speed for casually pushing temps down
+const int FAN_MID    = 700;  // Fan Speed for medium heating 
+
+const int INTERVAL_S = 3;    // Temp check + fan set interval in seconds
+
 
 int main() {
 
@@ -103,11 +108,29 @@ int main() {
 
         } else if( cpu_temp_c >= CPU_LOW ) {
 
+            pwmWrite( PWM_PIN, FAN_MID );
+
+            #ifdef DEBUG
+
+                printf( " - Set fan to \x1B[33m%d\x1B[0m \n", FAN_MID );
+
+            #else
+
+                // Only show startup messages on first main loop iteration
+                if( ! has_run ) {
+
+                    printf( "Initialized fan to %d!\n", FAN_MID );
+                }
+
+            #endif
+
+        } else {
+
             pwmWrite( PWM_PIN, FAN_LOW );
 
             #ifdef DEBUG
 
-                printf( " - Set fan to \x1B[33m%d\x1B[0m \n", FAN_LOW );
+                printf( " - Set fan to \x1B[32m%d\x1B[0m \n", FAN_LOW );
 
             #else
 
@@ -115,24 +138,6 @@ int main() {
                 if( ! has_run ) {
 
                     printf( "Initialized fan to %d!\n", FAN_LOW );
-                }
-
-            #endif
-
-        } else {
-
-            pwmWrite( PWM_PIN, 0 );
-
-            #ifdef DEBUG
-
-                printf( " - Set fan to \x1B[32m%d\x1B[0m \n", FAN_FULL );
-
-            #else
-
-                // Only show startup messages on first main loop iteration
-                if( ! has_run ) {
-
-                    printf( "Initialized fan to %d!\n", FAN_FULL );
                 }
 
             #endif
