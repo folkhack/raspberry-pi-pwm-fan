@@ -11,17 +11,34 @@
 
 const int PWM_PIN    = 1;    // Maps to pin 12 on RPI
 
-const int CPU_FULL   = 50;   // Temp over which fan has PWM value set to "FAN_FULL"
-                             // below is set to "FAN_MID
-const int CPU_LOW    = 45;   // Temp below which fan has PWM value set to "FAN_LOW"
-                             // over is set to "FAN_MID#"
+const int CPU_FULL   = 40;   // Correlates with setting FAN_FULL/FAN_LOW/FAN_MID
+const int CPU_MID    = 37;
+const int CPU_LOW    = 34;
 
 const int FAN_FULL   = 1023; // PWM motor control is 0-1023 speed for hot CPU
-const int FAN_LOW    = 300;  // Lowest speed for casually pushing temps down
-const int FAN_MID    = 700;  // Fan Speed for medium heating 
+const int FAN_MID    = 800;
+const int FAN_LOW    = 600;
 
-const int INTERVAL_S = 3;    // Temp check + fan set interval in seconds
+const int INTERVAL_S = 2;    // Temp check + fan set interval in seconds
 
+void set_pwm( int gpio_pin, int pwm_fan_speed, bool has_run ) {
+
+    pwmWrite( gpio_pin, pwm_fan_speed );
+
+    #ifdef DEBUG
+
+        printf( " - Set fan to \x1B[31m%d\x1B[0m \n", pwm_fan_speed );
+
+    #else
+
+        // Only show startup messages on first main loop iteration
+        if( ! has_run ) {
+
+            printf( "Initialized fan to %d!\n", pwm_fan_speed );
+        }
+
+    #endif
+}
 
 int main() {
 
@@ -90,57 +107,19 @@ int main() {
         //    correct motor speed value to the PWM pin
         if( cpu_temp_c >= CPU_FULL ) {
 
-            pwmWrite( PWM_PIN, FAN_FULL );
+            set_pwm( PWM_PIN, FAN_FULL, has_run );
 
-            #ifdef DEBUG
+        } else if( cpu_temp_c >= CPU_MID ) {
 
-                printf( " - Set fan to \x1B[31m%d\x1B[0m \n", FAN_FULL );
-
-            #else
-
-                // Only show startup messages on first main loop iteration
-                if( ! has_run ) {
-
-                    printf( "Initialized fan to %d!\n", FAN_FULL );
-                }
-
-            #endif
+            set_pwm( PWM_PIN, FAN_MID, has_run );
 
         } else if( cpu_temp_c >= CPU_LOW ) {
 
-            pwmWrite( PWM_PIN, FAN_MID );
-
-            #ifdef DEBUG
-
-                printf( " - Set fan to \x1B[33m%d\x1B[0m \n", FAN_MID );
-
-            #else
-
-                // Only show startup messages on first main loop iteration
-                if( ! has_run ) {
-
-                    printf( "Initialized fan to %d!\n", FAN_MID );
-                }
-
-            #endif
+            set_pwm( PWM_PIN, FAN_LOW, has_run );
 
         } else {
 
-            pwmWrite( PWM_PIN, FAN_LOW );
-
-            #ifdef DEBUG
-
-                printf( " - Set fan to \x1B[32m%d\x1B[0m \n", FAN_LOW );
-
-            #else
-
-                // Only show startup messages on first main loop iteration
-                if( ! has_run ) {
-
-                    printf( "Initialized fan to %d!\n", FAN_LOW );
-                }
-
-            #endif
+            set_pwm( PWM_PIN, 0, has_run );
         }
 
         // Set has run flag to ensure first-run logging correctly displays
