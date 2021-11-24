@@ -26,7 +26,7 @@ For a better visual follow wiring diagram listed here: https://blog.driftking.tw
 ### Building/Installing:
 
 **Requirements:**
-* `wiringPi.h` obtainable with `sudo apt install wiringpi`
+* `wiringPi.h` obtainable from https://github.com/WiringPi/WiringPi (`build` script is in root of WiringPi project)
 
 ```bash
 # Compile
