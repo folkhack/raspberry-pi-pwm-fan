@@ -9,7 +9,19 @@
 #define KGRN "\x1B[32m"
 #define KYEL "\x1B[33m"
 
-const int PWM_PIN    = 1;    // Maps to pin 12 on RPI
+//
+// PWM-capable pins
+// - https://datasheets.raspberrypi.com/bcm2835/bcm2835-peripherals.pdf
+//
+// BCM GPIO | RPI PIN | WiringPi PIN | PWM Channel | ALT Mode
+// -------------------------------------------------------
+//       12 |      32 |           26 | 0           | ALT0
+//       13 |      33 |           23 | 1           | ALT0
+//       18 |      12 |            1 | 0           | ALT5
+//       19 |      35 |           24 | 1           | ALT5
+//
+
+const int WPI_GPIO_PIN = 24;
 
 const int CPU_FULL   = 40;   // Correlates with setting FAN_FULL/FAN_LOW/FAN_MID
 const int CPU_MID    = 37;
@@ -21,9 +33,9 @@ const int FAN_LOW    = 600;
 
 const int INTERVAL_S = 2;    // Temp check + fan set interval in seconds
 
-void set_pwm( int gpio_pin, int pwm_fan_speed, bool has_run ) {
+void set_pwm( int pwm_fan_speed, bool has_run ) {
 
-    pwmWrite( gpio_pin, pwm_fan_speed );
+    pwmWrite( WPI_GPIO_PIN, pwm_fan_speed );
 
     #ifdef DEBUG
 
@@ -60,9 +72,22 @@ int main() {
     printf( "Wiring PI library initialized!\n" );
 
     // Set the PWM pin to output mode (we do not need to read fan speeds)
-    pinMode( PWM_PIN, PWM_OUTPUT );
+    pinMode( WPI_GPIO_PIN, PWM_OUTPUT );
 
-    printf( "PWM pin #%d set to output! Starting CPU temp polling at %ds interval...\n", PWM_PIN, INTERVAL_S );
+    printf( "PWM pin #%d set to output! Starting CPU temp polling at %ds interval...\n", WPI_GPIO_PIN, INTERVAL_S );
+
+    set_pwm( FAN_FULL, false );
+    sleep( 5 );
+    set_pwm( 0, false );
+    sleep( 5 );
+    set_pwm( FAN_FULL, false );
+    sleep( 5 );
+    set_pwm( 0, false );
+    sleep( 5 );
+    set_pwm( FAN_FULL, false );
+    sleep( 5 );
+    set_pwm( 0, false );
+    sleep( 5 );
 
     //
     //  MAIN LOOP
@@ -79,7 +104,7 @@ int main() {
 
             // If CPU temp can't be read, do the safe thing and push fan to full throttle
             //    throwing an exit code
-            pwmWrite( PWM_PIN, FAN_FULL );
+            pwmWrite( WPI_GPIO_PIN, FAN_FULL );
 
             return 1;
         }
@@ -107,19 +132,19 @@ int main() {
         //    correct motor speed value to the PWM pin
         if( cpu_temp_c >= CPU_FULL ) {
 
-            set_pwm( PWM_PIN, FAN_FULL, has_run );
+            set_pwm( FAN_FULL, has_run );
 
         } else if( cpu_temp_c >= CPU_MID ) {
 
-            set_pwm( PWM_PIN, FAN_MID, has_run );
+            set_pwm( FAN_MID, has_run );
 
         } else if( cpu_temp_c >= CPU_LOW ) {
 
-            set_pwm( PWM_PIN, FAN_LOW, has_run );
+            set_pwm( FAN_LOW, has_run );
 
         } else {
 
-            set_pwm( PWM_PIN, 0, has_run );
+            set_pwm( 0, has_run );
         }
 
         // Set has run flag to ensure first-run logging correctly displays
