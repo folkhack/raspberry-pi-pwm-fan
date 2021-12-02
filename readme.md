@@ -1,6 +1,8 @@
 # PWM Raspberry Pi Fan Controller
 
-![Example Raspberry Pi with PWM Fan Installed](docs/example_img.jpg|width=320)
+![Example Raspberry Pi with PWM Fan Installed](docs/example_img.jpg)
+
+<img src="https://github.com/folkhack/raspberry-pi-pwm-fan/blob/multi_pin_support/docs/example_img.jpg" width="300" align="center">
 
 Lightweight low-complexity fan controller that uses CPU temp that resides at `/usr/sbin/pwm_fan_control`.
 
