@@ -74,14 +74,23 @@ pwm_fan_control --help
 pwm_fan_control --gpio 13
 ```
 
-**systemd Service GPIO Override:** If you're using this with a GPIO different than 18 you will want to update the
-systemd service to reference the correct gpio.
+**systemd Service GPIO Override** - If you're using this with a GPIO different than 18 you will want to update the
+systemd service to add the `--gpio` argument as-seen below:
 
 ```bash
 sudo nano /etc/systemd/system/
 # Replace "ExecStart=/usr/sbin/pwm_fan_control"
 #    with "ExecStart=/usr/sbin/pwm_fan_control --gpio 13"
 ```
+
+---
+
+### pigpio Instead of WiringPi
+
+I did try to port this over to the better-supported pigpio library as-seen on the [pigpio_refactor branch](/folkhack/raspberry-pi-pwm-fan/tree/pigpio_refactor).
+
+Unfortunately it resulted in consistent 5-10% CPU use on a Raspberry Pi 4 which was unacceptable for a simple use. The
+above branch is working but should be considered unsupported for the time being.
 
 ---
 
