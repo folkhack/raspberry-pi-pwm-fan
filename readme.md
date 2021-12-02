@@ -1,10 +1,10 @@
-# PWM Raspberry Pi Fan
+# PWM Raspberry Pi Fan Controller
 
-![Example Raspberry Pi with PWM Fan Installed](docs/example_img.jpg)
+<img src="https://github.com/folkhack/raspberry-pi-pwm-fan/blob/multi_pin_support/docs/example_img.jpg" width="300" title="Example Raspberry Pi with PWM Fan Installed" alt="Example Raspberry Pi with PWM Fan Installed">
 
-Why?
+Lightweight low-complexity fan controller that uses CPU temp that resides at `/usr/sbin/pwm_fan_control`.
 
-Because I accidentally ordered Noctua PWM fans instead of FLX ones and all other Raspberry Pi PWM solutions I found were unacceptable with 20%+ idle CPU usage, out-of-date dependencies, etc. I wanted something light-weight that I can fully trust as a core system utility in `/usr/sbin`.
+Also comes with easy to use systemd service.
 
 ---
 
@@ -16,10 +16,13 @@ Pin numbers are basic Raspberry Pi "pin 1 starts at J8" numbers (not GPIO/etc. n
 
 * **PWM +5V** - Pin 4
 * **PWM Ground** - Pin 6
-* **PWM Signal +5V** - Pin 12
-* **PWM Speed Signal** - Pin 18; bridged to pin 17 (3.3V) with a 1k Ohm resistor
+* **PWM Speed Set** - Pin 12
+* **PWM Speed Read** - (not required/supported) Pin 18; bridged to pin 17 (3.3V) with a 1k Ohm resistor
 
-For a better visual follow wiring diagram listed here: https://blog.driftking.tw/en/2019/11/Using-Raspberry-Pi-to-Control-a-PWM-Fan-and-Monitor-its-Speed/#Wiring
+Wiring Notes:
+
+* For a better visual follow wiring diagram listed here: https://blog.driftking.tw/en/2019/11/Using-Raspberry-Pi-to-Control-a-PWM-Fan-and-Monitor-its-Speed/#Wiring
+* The PWM speed read is optional and can be wired if you want to read the actual fan speed as seen in the previous link
 
 ---
 
@@ -45,10 +48,49 @@ sudo make uninstall
 
 ---
 
-### Notes:
+### Use:
 
-* Only tested with a Raspberry Pi 4 but should work fine with other models that have PWM capability
-* You will likely want to tweak the temps/speeds to your own needs in `main.c`. Currently I have it configured to aggressively keep the temps down as much as possible since mine literally sits centimeters away from a heated printer bed.
+```bash
+# Run with default PWM GPIO #12
+pwm_fan_control
+
+# Display help:
+pwm_fan_control --help
+
+# Raspberry Pi CPU PWM Fan Controller 
+#
+# Usage: pwm_fan_control [OPTION]... 
+#
+# Watches CPU temp and sets PWM fan speed accordingly with WiringPi library.
+#
+# --gpio BCM_GPIO_PIN_NUMBER       (default 18) BCM GPIO pin # for setting PWM fan speed 
+#                                               12, 13, 18, 19 pins supported (hardware PWM) 
+#
+# Exit status: 1 if error 
+
+##############
+
+# Set a different PWM speed set GPIO pin
+pwm_fan_control --gpio 13
+```
+
+**systemd Service GPIO Override** - If you're using this with a GPIO different than 18 you will want to update the
+systemd service to add the `--gpio` argument as-seen below:
+
+```bash
+sudo nano /etc/systemd/system/
+# Replace "ExecStart=/usr/sbin/pwm_fan_control"
+#    with "ExecStart=/usr/sbin/pwm_fan_control --gpio 13"
+```
+
+---
+
+### pigpio Instead of WiringPi
+
+I did try to port this over to the better-supported pigpio library as-seen on the [pigpio_refactor branch](/folkhack/raspberry-pi-pwm-fan/tree/pigpio_refactor).
+
+Unfortunately it resulted in consistent 5-10% CPU use on a Raspberry Pi 4 which was unacceptable for a simple use. The
+above branch is working but should be considered unsupported for the time being.
 
 ---
 
