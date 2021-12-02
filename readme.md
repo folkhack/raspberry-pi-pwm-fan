@@ -48,9 +48,12 @@ sudo make uninstall
 
 ---
 
-### Use
+### Use:
 
 ```bash
+# Run with default PWM GPIO #12
+pwm_fan_control
+
 # Display help:
 pwm_fan_control --help
 
@@ -76,7 +79,8 @@ systemd service to reference the correct gpio.
 
 ```bash
 sudo nano /etc/systemd/system/
-# Replace "ExecStart=/usr/sbin/pwm_fan_control" with "ExecStart=/usr/sbin/pwm_fan_control --gpio 13"
+# Replace "ExecStart=/usr/sbin/pwm_fan_control"
+#    with "ExecStart=/usr/sbin/pwm_fan_control --gpio 13"
 ```
 
 ---
