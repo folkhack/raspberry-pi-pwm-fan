@@ -1,6 +1,6 @@
 # PWM Raspberry Pi Fan Controller
 
-**🛑 DEPRECATED! - This utility is deprecated and has been superseded by a much improved fan controller - "Raspberry Pi PWM Fan Control in C and Python"](https://github.com/folkhack/raspberry-pi-pwm-fan-2)**
+**🛑 DEPRECATED! - This utility is deprecated and has been superseded by a much improved fan controller - ["Raspberry Pi PWM Fan Control in C and Python"](https://github.com/folkhack/raspberry-pi-pwm-fan-2)**
 
 This library uses a stepwise function to control the fan speed which results in fans cycling on/off more than they need to. It's *highly* recommended you uninstall this controller script and upgrade.
 
