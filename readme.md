@@ -1,6 +1,24 @@
 # PWM Raspberry Pi Fan Controller
 
-<img src="https://github.com/folkhack/raspberry-pi-pwm-fan/blob/multi_pin_support/docs/example_img.jpg" width="300" title="Example Raspberry Pi with PWM Fan Installed" alt="Example Raspberry Pi with PWM Fan Installed">
+**🛑 DEPRECATED! - This utility is deprecated and has been superseded by a much improved fan controller - "Raspberry Pi PWM Fan Control in C and Python"](https://github.com/folkhack/raspberry-pi-pwm-fan-2)**
+
+This library uses a stepwise function to control the fan speed which results in fans cycling on/off more than they need to. It's *highly* recommended you uninstall this controller script and upgrade.
+
+## Uninstall Instructions:
+
+```bash
+# From the project's root with the makefile
+# - Removes systemd service
+# - Removes binary
+# - Stops service
+sudo make uninstall
+````
+
+**[✅ V2 Install Instructions &raquo;](https://github.com/folkhack/raspberry-pi-pwm-fan-2#scripted-installsh-install)**
+
+---
+
+# Historical readme.md:
 
 Lightweight low-complexity fan controller that uses CPU temp that resides at `/usr/sbin/pwm_fan_control`.
 
